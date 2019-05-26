@@ -1,0 +1,252 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 50
+char** trim(char mat[][6], int* rezN, int* rezM);
+char** rotate90(char** predmet, int n, int m);
+int locate(char kofer[][MAX], int n, int m, char** predmet, int pN, int pM);
+
+
+
+int main(){
+    int x,y,i,j,n,m,l,s,b=0,*rezN=6,* rezM=6,w,e;
+    char a,*ptr,**rot;
+    do{do{
+    scanf (" %d %d",&n ,&m);  ///velicina matrice (kofera)
+    }while(n<=1||n>=50);
+    }while(m<=1||m>=50);
+    char kof[MAX][MAX]={};
+    w=n;
+    e=m;
+    for(i=0;i<n;i++){
+        for(j=0;j<m;j++){
+            scanf(" %c",&a);  ///ucitavanje kofera
+            if(a=='+'||a=='-'){
+                kof[i][j]=a;
+            }
+            if(a=='|'||a=='#'){
+                kof[i][j]=a;
+            }
+            if(a=='*'||a=='.'){
+                kof[i][j]=a;
+            }
+    }}
+    do{
+    scanf("%d",&s); ///broj predmeta
+    }while(s<1&&s>10);
+    char mat[6][6]={};
+
+
+
+
+    for(x=1;x<=s;x++){   ///Pocetak opasnih predmeta!!!!!!!!!!!!!!!!!!!!!!!!
+    for(i=0;i<6;i++){
+        for(j=0;j<6;j++){
+            scanf(" %c",&a);   ///ucitavanje opasnih predmeta
+            mat[i][j]=a;
+        }
+    }
+    trim(&mat,&rezN,&rezM);    /// obrezivanje
+    n=rezN;
+    m=rezM;
+    char **predmet= (char **)malloc(m * sizeof(char *));  ///opasni predmeti matrica
+     for (i=0; i<n; i++){
+         predmet[i] = (char *)malloc(n * sizeof(char));
+         }
+    for(i=0;i<n;i++){
+        for(j=0;j<m;j++){
+          *(*(predmet+i)+j)=mat[i][j];       ///upisivanje u matricu predmet
+        }}
+
+
+
+    for(l=0;l<3;l++){   ///rotiranjeeeeeeee po 90
+      rot=rotate90(predmet,n,m);
+      predmet=rot;
+
+      y=locate(&kof,w,e,predmet,n,m);  ///trazenje predmeta po koferu
+      if(y==1){
+        continue;
+     }
+
+    }
+    if (y==1&&b==0){
+        printf("Opasni predmeti: %d",x);
+        b++;
+      }
+      else if(y==1&&b>0){
+        printf(" %d",x);
+      }
+
+
+
+
+
+
+    rezN=6;
+    rezM=6;
+    }
+
+if(b>0){
+        printf("\n");
+        printf("VODI GA!");
+}
+else if (y==0&&b==0){
+    printf("Mozete proci.");
+}
+
+
+
+
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+char** trim(char mat[][6], int* rezN, int* rezM){
+int i,j,b=0,x,y;
+int k=*rezN,l=*rezM;
+for(i=0;i<k;i++){     ///provjera reda
+    for(j=0;j<l;j++){
+        if(mat[i][j]=='.'){
+            b++;
+        }
+    }
+if(b==l){
+    for(x=i;x<(k-1);x++){
+      for(y=0;y<l;y++){
+          mat[x][y]=mat[x+1][y];
+    }}
+k-=1;
+i-=1;
+}
+b=0;
+}
+
+for(i=0;i<l;i++){    ///provjera stupca
+    for(j=0;j<k;j++){
+        if(mat[j][i]=='.'){
+            b++;
+        }
+    }
+if(b==k){
+    for(x=0;x<k;x++){
+      for(y=i;y<(l-1);y++){
+          mat[x][y]=mat[x][y+1];
+    }}
+l-=1;
+i-=1;
+}
+b=0;
+}
+*rezN=k;
+*rezM=l;
+}
+
+
+
+
+
+
+char** rotate90(char** predmet, int n, int m){   ///rotiranje...
+    int i,j,x=m-1;
+    char a,temp;
+    char **rot= (char **)malloc(n * sizeof(char *));  ///matrica za rotiranje
+     for (i=0; i<n; i++){
+         rot[i] = (char *)malloc(m * sizeof(char));
+         }
+
+    for(i=0;i<n;i++){
+       for(j=0;j<m;j++){
+        a=*(*(predmet+i)+j);
+        if(a=='|'){
+            rot[x-j][i]='-';
+        }
+        else if(a=='-'){
+            rot[x-j][i]='|';
+        }
+        else{
+            rot[x-j][i]=a;
+        }
+
+       }}
+    return (rot);
+}
+
+
+
+
+int locate(char kofer[][MAX], int n, int m, char** predmet, int pN, int pM){   ///trazenjee
+    int i,j,x,k=pN,l=pM,velicinapredmeta=0,y,re,st,trazenje=0,f,g,kriv=1,neduzan=0;
+    char a,b,c;
+    for(i=0;i<pM;i++){
+        for(j=0;j<pN;j++){
+            if(*(*(predmet+i)+j)!='.'){
+                    velicinapredmeta++;
+        }}}
+
+
+    for(i=0;i<n;i++){
+
+        for(j=0;j<m;j++){
+                a=kofer[i][j];
+        if(a!='.'){
+
+            for(x=0;x<l;x++){
+                for(y=0;y<k;y++){
+                   if (*(*(predmet+x)+y)==a){
+                      f=i-x;
+                      g=j-y;
+
+
+                      for(re=0;re<l;re++){
+                        for(st=0;st<k;st++){
+                           b=*(*(predmet+re)+st);
+                           c=kofer[i+re][g+st];
+                        if(b==c){
+                            if(b!='.'){
+                            trazenje++;
+                        }}
+                        if(trazenje==velicinapredmeta){
+                            return kriv;
+                            }
+}}}}}}}}
+
+
+
+
+
+
+return neduzan;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
